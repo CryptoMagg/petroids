@@ -131,23 +131,23 @@
         .setScale(bgScale);
 
       // Signal that game is ready to play
-      window.FarcadeSDK.singlePlayer.actions.ready();
+      // window.FarcadeSDK.singlePlayer.actions.ready();
 
       // Handle play again requests
-      window.FarcadeSDK.on('play_again', () => {
+      /* window.FarcadeSDK.on('play_again', () => {
         this.scene.restart();
         lives = 3;
         score = 0;
         speed = 1;
         gameOver = false;
         gameStarted = false;
-      });
+      }); */
 
       // Handle mute/unmute
-      window.FarcadeSDK.on('toggle_mute', (data) => {
+      /* window.FarcadeSDK.on('toggle_mute', (data) => {
         // Game currently has no audio, but we'll handle the event
         // setMuted(data.isMuted);
-      });
+      }); */
 
       // Mobile touch controls setup
       this.input.on('pointerdown', (pointer) => {
@@ -389,7 +389,7 @@
             player.setTint(0xff0000);
 
             // Signal game over to Farcade
-            window.FarcadeSDK.singlePlayer.actions.gameOver({ score: score });
+            // window.FarcadeSDK.singlePlayer.actions.gameOver({ score: score });
 
             gameOverText = this.add.text(config.width / 2, config.height / 2, 'GAME OVER\nScore: ' + score + '\nPress SPACE to restart', {
               fontSize: '32px',
@@ -445,7 +445,7 @@
       scoreText.setText('Score: ' + score);
 
       // Add haptic feedback for successful hit
-      window.FarcadeSDK.singlePlayer.actions.hapticFeedback();
+      // window.FarcadeSDK.singlePlayer.actions.hapticFeedback();
     }
 
     function enemyHitPlayer(player, enemy) {
@@ -457,7 +457,7 @@
       }
 
       // Add haptic feedback for taking damage
-      window.FarcadeSDK.singlePlayer.actions.hapticFeedback();
+      // window.FarcadeSDK.singlePlayer.actions.hapticFeedback();
 
       // Flash the cow red
       player.setTint(0xff0000);
@@ -470,7 +470,7 @@
         player.setTint(0xff0000);
 
         // Signal game over to Farcade
-        window.FarcadeSDK.singlePlayer.actions.gameOver({ score: score });
+        // window.FarcadeSDK.singlePlayer.actions.gameOver({ score: score });
 
         gameOverText = this.add.text(config.width / 2, config.height / 2, 'GAME OVER\nScore: ' + score + '\nPress SPACE to restart', {
           fontSize: '32px',
