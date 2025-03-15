@@ -149,6 +149,66 @@
         // setMuted(data.isMuted);
       });
 
+      // Mobile touch controls setup
+      this.input.on('pointerdown', (pointer) => {
+        if (!gameStarted) {
+          if (startText) {
+            gameStarted = true;
+            startText.destroy();
+            spawnEnemy(this);
+            this.time.addEvent({
+              delay: 2000,
+              callback: () => spawnEnemy(this),
+              callbackScope: this,
+              loop: true
+            });
+          }
+          return;
+        }
+
+        if (gameOver) {
+          return;
+        }
+
+        // Shoot on tap
+        const bullet = bullets.create(player.x, player.y - 50, 'bullet');
+        bullet.setVelocityY(-400);
+        bullet.setDisplaySize(4, 4);
+        bullet.setTint(0xF5DEB3);
+      });
+
+      let dragStartX = 0;
+      this.input.on('pointerdown', (pointer) => {
+        dragStartX = pointer.x;
+      });
+
+      this.input.on('pointermove', (pointer) => {
+        if (!gameStarted || gameOver || !pointer.isDown) return;
+
+        const dragDistance = pointer.x - dragStartX;
+        const moveSpeed = 2; // Adjust sensitivity
+        player.setVelocityX(dragDistance * moveSpeed);
+
+        // Update player facing direction
+        if (dragDistance < 0) {
+          player.setFlipX(false);
+        } else if (dragDistance > 0) {
+          player.setFlipX(true);
+        }
+
+        // Keep player within bounds
+        if (player.x < -player.width) {
+          player.x = -player.width;
+        } else if (player.x > config.width + player.width) {
+          player.x = config.width + player.width;
+        }
+      });
+
+      this.input.on('pointerup', () => {
+        if (!gameStarted || gameOver) return;
+        player.setVelocityX(0);
+      });
+
       // Foreground animation setup
       this.anims.create({
         key: 'grass_wave',
@@ -249,24 +309,25 @@
         return;
       }
 
-      // Player movement
+      // Keyboard controls (keep for desktop)
       if (cursors.left.isDown) {
         player.setVelocityX(-300);
         player.setFlipX(false);
-        if (player.x < -player.width) {
-          player.x = -player.width;
-        }
       } else if (cursors.right.isDown) {
         player.setVelocityX(300);
         player.setFlipX(true);
-        if (player.x > config.width + player.width) {
-          player.x = config.width + player.width;
-        }
-      } else {
+      } else if (!this.input.activePointer.isDown) { // Only stop if not touching
         player.setVelocityX(0);
       }
 
-      // Shooting
+      // Keep player within bounds
+      if (player.x < -player.width) {
+        player.x = -player.width;
+      } else if (player.x > config.width + player.width) {
+        player.x = config.width + player.width;
+      }
+
+      // Keyboard shooting (keep for desktop)
       if (Phaser.Input.Keyboard.JustDown(spaceKey)) {
         const bullet = bullets.create(player.x, player.y - 50, 'bullet');
         bullet.setVelocityY(-400);
