@@ -391,13 +391,23 @@
             // Signal game over to Farcade
             // window.FarcadeSDK.singlePlayer.actions.gameOver({ score: score });
 
-            gameOverText = this.add.text(config.width / 2, config.height / 2, 'GAME OVER\nScore: ' + score + '\nPress SPACE to restart', {
+            gameOverText = this.add.text(config.width / 2, config.height / 2, 'GAME OVER\nScore: ' + score + '\nTap or Press SPACE to restart', {
               fontSize: '32px',
               fill: '#F5DEB3',
               align: 'center',
               backgroundColor: '#000000',
               padding: { x: 20, y: 10 }
             }).setOrigin(0.5);
+
+            // Add tap to restart
+            this.input.once('pointerdown', () => {
+              this.scene.restart();
+              lives = 3;
+              score = 0;
+              speed = 1;
+              gameOver = false;
+              gameStarted = false;
+            });
 
             this.input.keyboard.once('keydown-SPACE', () => {
               this.scene.restart();
@@ -472,13 +482,23 @@
         // Signal game over to Farcade
         // window.FarcadeSDK.singlePlayer.actions.gameOver({ score: score });
 
-        gameOverText = this.add.text(config.width / 2, config.height / 2, 'GAME OVER\nScore: ' + score + '\nPress SPACE to restart', {
+        gameOverText = this.add.text(config.width / 2, config.height / 2, 'GAME OVER\nScore: ' + score + '\nTap or Press SPACE to restart', {
           fontSize: '32px',
           fill: '#F5DEB3',
           align: 'center',
           backgroundColor: '#000000',
           padding: { x: 20, y: 10 }
         }).setOrigin(0.5);
+
+        // Add tap to restart
+        this.input.once('pointerdown', () => {
+          this.scene.restart();
+          lives = 3;
+          score = 0;
+          speed = 1;
+          gameOver = false;
+          gameStarted = false;
+        });
 
         this.input.keyboard.once('keydown-SPACE', () => {
           this.scene.restart();
