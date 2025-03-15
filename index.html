@@ -1,362 +1,378 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Neon Runner</title>
-    <script src="https://unpkg.com/@farcade/game-sdk@latest/dist/index.min.js"></script>
-    <style>
-      body {
-        margin: 0;
-        padding: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        background: #000;
-        font-family: 'Arial', sans-serif;
-      }
 
-      .emulator-frame {
-        position: relative;
-        width: 100%;
-        max-width: 400px;
-        background: #1a1a1a;
-        border-radius: 10px;
-        padding: 1px;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Petroids</title>
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: #000;
+      font-family: 'Arial', sans-serif;
+    }
 
-      .emulator-header {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        padding: 6px;
-        color: white;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      }
+    .emulator-frame {
+      position: relative;
+      width: 100%;
+      max-width: 400px;
+      background: #8B4513;
+      border-radius: 10px;
+      padding: 1px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
 
-      p {
-        margin: 0;
-      }
+    .emulator-header {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 6px;
+      color: #F5DEB3;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      background: #654321;
+    }
 
-      .game-container {
-        position: relative;
-        width: 100%;
-        padding-top: 160%;
-        background: #000;
-        overflow: hidden;
-        border-radius: 0 0 10px 0;
-      }
+    p {
+      margin: 0;
+    }
 
-      #gameCanvas {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: #000;
-        border-radius: 0 0 10px 0;
-      }
+    .game-container {
+      position: relative;
+      width: 100%;
+      padding-top: 160%;
+      background: #000;
+      overflow: hidden;
+      border-radius: 0 0 10px 10px;
+    }
 
-      #ui {
-        position: absolute;
-        top: 20px;
-        width: 100%;
-        text-align: center;
-        color: #0ff;
-        font-family: 'Arial', sans-serif;
-        font-size: 24px;
-        text-shadow: 0 0 10px #0ff;
-        z-index: 2;
-      }
+    #gameCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+    }
+  </style>
+</head>
 
-      .screen {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: rgba(0, 0, 0, 0.9);
-        color: #0ff;
-        text-align: center;
-        padding: 20px;
-        width: 80%;
-        border-radius: 10px;
-        z-index: 3;
-        border: 2px solid #0ff;
-        text-shadow: 0 0 10px #0ff;
-        box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
-      }
-
-      .touch-controls {
-        position: absolute;
-        bottom: 40px;
-        width: 100%;
-        display: none;
-        justify-content: center;
-        gap: 40px;
-        z-index: 2;
-      }
-
-      .touch-btn {
-        width: 60px;
-        height: 60px;
-        background: rgba(0, 255, 255, 0.2);
-        border: 2px solid #0ff;
-        border-radius: 50%;
-        box-shadow: 0 0 10px #0ff;
-      }
-
-      @media (max-width: 768px) {
-        .touch-controls {
-          display: flex;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="emulator-frame">
-      <div class="emulator-header">
-        <div>Farcade</div>
-        <p style="font-size: 12px; color: #888">Mini App</p>
-      </div>
-      <div class="game-container">
-        <div id="ui">Score: <span id="score">0</span></div>
-        <canvas id="gameCanvas"></canvas>
-        <div id="startScreen" class="screen">
-          <h1>NEON RUNNER</h1>
-          <p>Avoid the walls!</p>
-          <p>← → to move</p>
-          <p>Press Space to Start</p>
-        </div>
-        <div id="gameOverScreen" class="screen" style="display: none">
-          <h1>GAME OVER</h1>
-          <p>Score: <span id="finalScore">0</span></p>
-          <p>Press Space to Restart</p>
-        </div>
-        <div class="touch-controls">
-          <div id="touchLeft" class="touch-btn"></div>
-          <div id="touchRight" class="touch-btn"></div>
-        </div>
-      </div>
+<body>
+  <div class="emulator-frame">
+    <div class="emulator-header">
+      <div>Petroids</div>
+      <p style="font-size: 12px; color: #DEB887">v0.0.33</p>
     </div>
+    <div class="game-container">
+      <div id="gameCanvas"></div>
+    </div>
+  </div>
 
-    <script>
-      const canvas = document.getElementById('gameCanvas')
-      const ctx = canvas.getContext('2d')
-      const startScreen = document.getElementById('startScreen')
-      const gameOverScreen = document.getElementById('gameOverScreen')
-      const scoreDisplay = document.getElementById('score')
-      const finalScoreDisplay = document.getElementById('finalScore')
-
-      // Set canvas size (5:8 aspect ratio)
-      canvas.width = 500
-      canvas.height = 800
-
-      let gameState = 'start'
-      let score = 0
-      let speed = 5
-      let walls = []
-
-      class Player {
-        constructor() {
-          this.width = 20
-          this.height = 20
-          this.x = canvas.width / 2 - this.width / 2
-          this.y = canvas.height - 100
-          this.speed = 6
-          this.trail = []
-          this.maxTrailLength = 10
+  <script>
+    const config = {
+      type: Phaser.AUTO,
+      parent: 'gameCanvas',
+      width: 400,
+      height: 640,
+      physics: {
+        default: 'arcade',
+        arcade: {
+          gravity: { y: 0 },
+          debug: false
         }
+      },
+      scene: {
+        preload: preload,
+        create: create,
+        update: update
+      }
+    };
 
-        update() {
-          if (keys['ArrowLeft'] || keys['a']) this.x -= this.speed
-          if (keys['ArrowRight'] || keys['d']) this.x += this.speed
+    const game = new Phaser.Game(config);
 
-          this.x = Math.max(0, Math.min(canvas.width - this.width, this.x))
+    let player;
+    let bullets;
+    let enemies;
+    let cursors;
+    let spaceKey;
+    let score = 0;
+    let lives = 3;
+    let speed = 1;
+    let gameOver = false;
+    let scoreText;
+    let livesText;
+    let speedText;
+    let startText;
+    let gameStarted = false;
+    let gameOverText;
+    let hearts = [];
+    let background;
+    let foreground;
 
-          // Update trail
-          this.trail.unshift({ x: this.x, y: this.y })
-          if (this.trail.length > this.maxTrailLength) {
-            this.trail.pop()
+    function preload() {
+      this.load.spritesheet('cow', 'Cow_Black_Idle.png', { frameWidth: 72, frameHeight: 72 });
+      this.load.spritesheet('boar', 'Boar_Black_Idle.png', { frameWidth: 72, frameHeight: 72 });
+      this.load.image('background', 'grovebg.png');
+      this.load.spritesheet('foreground', 'grovefg.png', { frameWidth: 90, frameHeight: 90, endFrame: 12 });
+    }
+
+    function create() {
+      // Background
+      const bgScale = config.width / 90;
+      background = this.add.image(config.width / 2, config.height, 'background')
+        .setScale(bgScale)
+        .setOrigin(0.5, 1);
+
+      // Animated foreground
+      foreground = this.add.sprite(config.width / 2, config.height, 'foreground')
+        .setScale(bgScale)
+        .setOrigin(0.5, 1);
+
+      this.anims.create({
+        key: 'foreground_anim',
+        frames: this.anims.generateFrameNumbers('foreground', { start: 0, end: 12 }),
+        frameRate: 10,
+        repeat: -1
+      });
+
+      foreground.play('foreground_anim');
+
+      // Player animations
+      this.anims.create({
+        key: 'cow_idle',
+        frames: this.anims.generateFrameNumbers('cow', { start: 0, end: 39 }),
+        frameRate: 24,
+        repeat: -1
+      });
+
+      // Enemy animations
+      this.anims.create({
+        key: 'boar_idle',
+        frames: this.anims.generateFrameNumbers('boar', { start: 0, end: 23 }),
+        frameRate: 24,
+        repeat: -1
+      });
+
+      // Player setup
+      player = this.physics.add.sprite(config.width / 2, config.height - 100, 'cow')
+        .setScale(3)
+        .setFlipX(false);
+      player.play('cow_idle');
+      player.setCollideWorldBounds(true, 0.6, 0.6);
+      player.body.setSize(40, 40);
+      player.body.setOffset(16, 16);
+
+      // Bullets group
+      bullets = this.physics.add.group();
+
+      // Enemies group
+      enemies = this.physics.add.group();
+
+      // UI setup
+      const uiBackground = this.add.rectangle(0, 0, config.width, 50, 0x000000, 0.5)
+        .setOrigin(0, 0);
+
+      scoreText = this.add.text(10, 10, 'Score: 0', {
+        fontSize: '16px',
+        fill: '#F5DEB3'
+      });
+
+      speedText = this.add.text(10, 30, 'Speed: 1x', {
+        fontSize: '16px',
+        fill: '#F5DEB3'
+      });
+
+      // Hearts
+      for (let i = 0; i < lives; i++) {
+        hearts[i] = this.add.text(config.width - 30 - (i * 30), 25, '❤️', {
+          fontSize: '20px'
+        }).setOrigin(0.5);
+      }
+
+      // Start text
+      startText = this.add.text(config.width / 2, config.height / 2, 'Press SPACE to start', {
+        fontSize: '24px',
+        fill: '#F5DEB3',
+        backgroundColor: '#000000',
+        padding: { x: 20, y: 10 }
+      }).setOrigin(0.5);
+
+      // Input
+      cursors = this.input.keyboard.createCursorKeys();
+      spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+
+      // Collisions
+      this.physics.add.overlap(bullets, enemies, bulletHitEnemy, null, this);
+      this.physics.add.overlap(player, enemies, enemyHitPlayer, null, this);
+    }
+
+    function update() {
+      if (!gameStarted) {
+        if (Phaser.Input.Keyboard.JustDown(spaceKey)) {
+          gameStarted = true;
+          startText.destroy();
+          spawnEnemy(this);
+          this.time.addEvent({
+            delay: 2000,
+            callback: () => spawnEnemy(this),
+            callbackScope: this,
+            loop: true
+          });
+        }
+        return;
+      }
+
+      if (gameOver) {
+        return;
+      }
+
+      // Player movement
+      if (cursors.left.isDown) {
+        player.setVelocityX(-300);
+        player.setFlipX(false);
+      } else if (cursors.right.isDown) {
+        player.setVelocityX(300);
+        player.setFlipX(true);
+      } else {
+        player.setVelocityX(0);
+      }
+
+      // Shooting
+      if (Phaser.Input.Keyboard.JustDown(spaceKey)) {
+        const bullet = bullets.create(player.x, player.y, 'bullet');
+        bullet.setVelocityY(-400);
+        bullet.setDisplaySize(4, 4);
+        bullet.setTint(0xF5DEB3);
+      }
+
+      // Update enemies
+      enemies.children.iterate((enemy) => {
+        if (enemy) {
+          // Update enemy movement pattern
+          if (enemy.movePattern && this.time.now > enemy.movePattern.changeTime) {
+            enemy.movePattern.speedX = Phaser.Math.Between(-100, 100);
+            enemy.movePattern.changeTime = this.time.now + Phaser.Math.Between(500, 2000);
+          }
+
+          // Apply movement
+          enemy.setVelocity(
+            enemy.movePattern.speedX * speed,
+            enemy.movePattern.speedY * speed
+          );
+
+          // Update enemy facing direction
+          if (enemy.movePattern.speedX > 0) {
+            enemy.setFlipX(true);
+          } else if (enemy.movePattern.speedX < 0) {
+            enemy.setFlipX(false);
+          }
+
+          // Keep enemies within screen bounds
+          if (enemy.x < 0 || enemy.x > config.width) {
+            enemy.movePattern.speedX *= -1;
           }
         }
+      });
 
-        draw() {
-          // Draw trail
-          this.trail.forEach((pos, i) => {
-            const alpha = 1 - i / this.maxTrailLength
-            ctx.fillStyle = `rgba(0, 255, 255, ${alpha})`
-            ctx.fillRect(pos.x, pos.y, this.width, this.height)
-          })
+      // Gradually increase speed
+      speed += 0.0001;
+      speedText.setText(`Speed: ${speed.toFixed(1)}x`);
 
-          // Draw player
-          ctx.fillStyle = '#0ff'
-          ctx.shadowBlur = 20
-          ctx.shadowColor = '#0ff'
-          ctx.fillRect(this.x, this.y, this.width, this.height)
-          ctx.shadowBlur = 0
+      // Clean up off-screen objects
+      bullets.children.iterate((bullet) => {
+        if (bullet && bullet.y < 0) {
+          bullet.destroy();
         }
+      });
 
-        checkCollision(wall) {
-          return (
-            this.x < wall.x + wall.width &&
-            this.x + this.width > wall.x &&
-            this.y < wall.y + wall.height &&
-            this.y + this.height > wall.y
-          )
+      enemies.children.iterate((enemy) => {
+        if (enemy && enemy.y > config.height) {
+          enemy.destroy();
         }
-      }
+      });
 
-      class Wall {
-        constructor() {
-          this.width = Math.random() * 200 + 100
-          this.height = 20
-          this.x = Math.random() * (canvas.width - this.width)
-          this.y = -this.height
-        }
-
-        update() {
-          this.y += speed
-        }
-
-        draw() {
-          ctx.fillStyle = '#f0f'
-          ctx.shadowBlur = 20
-          ctx.shadowColor = '#f0f'
-          ctx.fillRect(this.x, this.y, this.width, this.height)
-          ctx.shadowBlur = 0
+      // Ensure maximum 5 enemies
+      if (enemies.countActive() < 5) {
+        const chance = Math.random();
+        if (chance < 0.02) {
+          spawnEnemy(this);
         }
       }
+    }
 
-      let player = new Player()
-      const keys = {}
+    function spawnEnemy(scene) {
+      if (enemies.countActive() >= 5) return;
 
-      // Input handlers
-      document.addEventListener('keydown', (e) => {
-        keys[e.key] = true
-        if (e.key === ' ') {
-          if (gameState === 'start') startGame()
-          if (gameState === 'gameover') resetGame()
-        }
-      })
-      document.addEventListener('keyup', (e) => (keys[e.key] = false))
+      const x = Phaser.Math.Between(0, config.width);
+      const enemy = enemies.create(x, -50, 'boar')
+        .setScale(3);
 
-      // Touch controls
-      const touchLeft = document.getElementById('touchLeft')
-      const touchRight = document.getElementById('touchRight')
+      enemy.play('boar_idle');
+      enemy.setFlipX(false);
+      enemy.body.setSize(40, 40);
+      enemy.body.setOffset(16, 16);
 
-      touchLeft.addEventListener('touchstart', () => (keys['ArrowLeft'] = true))
-      touchLeft.addEventListener('touchend', () => (keys['ArrowLeft'] = false))
-      touchRight.addEventListener(
-        'touchstart',
-        () => (keys['ArrowRight'] = true)
-      )
-      touchRight.addEventListener(
-        'touchend',
-        () => (keys['ArrowRight'] = false)
-      )
+      // Set random movement pattern
+      enemy.movePattern = {
+        speedX: Phaser.Math.Between(-100, 100),
+        speedY: Phaser.Math.Between(50, 150),
+        changeTime: scene.time.now + Phaser.Math.Between(500, 2000)
+      };
+    }
 
-      function startGame() {
-        gameState = 'playing'
-        startScreen.style.display = 'none'
-        resetGame()
-        // Initialize Farcade SDK
-        window.FarcadeSDK.singlePlayer.actions.ready()
+    function bulletHitEnemy(bullet, enemy) {
+      bullet.destroy();
+      enemy.destroy();
+      speed += 0.01; // Increase speed for each boar killed
+      speedText.setText(`Speed: ${speed.toFixed(2)}x`);
+      score += Math.floor(10 * speed);
+      scoreText.setText('Score: ' + score);
+    }
+
+    function enemyHitPlayer(player, enemy) {
+      enemy.destroy();
+      lives--;
+
+      if (hearts[lives]) {
+        hearts[lives].destroy();
       }
 
-      function resetGame() {
-        player = new Player()
-        walls = []
-        score = 0
-        speed = 5
-        gameState = 'playing'
-        gameOverScreen.style.display = 'none'
+      // Flash the cow red
+      player.setTint(0xff0000);
+      this.time.delayedCall(200, () => {
+        player.clearTint();
+      });
+
+      if (lives <= 0) {
+        gameOver = true;
+        player.setTint(0xff0000);
+
+        gameOverText = this.add.text(config.width / 2, config.height / 2, 'GAME OVER\nScore: ' + score + '\nPress SPACE to restart', {
+          fontSize: '32px',
+          fill: '#F5DEB3',
+          align: 'center',
+          backgroundColor: '#000000',
+          padding: { x: 20, y: 10 }
+        }).setOrigin(0.5);
+
+        this.input.keyboard.once('keydown-SPACE', () => {
+          this.scene.restart();
+          lives = 3;
+          score = 0;
+          speed = 1;
+          gameOver = false;
+          gameStarted = false;
+        });
       }
+    }
+  </script>
+</body>
 
-      function gameOver() {
-        gameState = 'gameover'
-        gameOverScreen.style.display = 'block'
-        finalScoreDisplay.textContent = Math.floor(score)
-        // Report score to Farcade SDK
-        window.FarcadeSDK.singlePlayer.actions.gameOver({
-          score: Math.floor(score),
-        })
-      }
-
-      function update() {
-        if (gameState !== 'playing') return
-
-        player.update()
-
-        // Spawn new walls
-        if (Math.random() < 0.02) {
-          walls.push(new Wall())
-        }
-
-        // Update walls
-        for (let i = walls.length - 1; i >= 0; i--) {
-          walls[i].update()
-
-          // Check collision
-          if (player.checkCollision(walls[i])) {
-            gameOver()
-            return
-          }
-
-          // Remove off-screen walls
-          if (walls[i].y > canvas.height) {
-            walls.splice(i, 1)
-          }
-        }
-
-        // Increase score and speed
-        score += 0.1
-        speed = 5 + Math.floor(score / 100)
-
-        scoreDisplay.textContent = Math.floor(score)
-      }
-
-      function draw() {
-        // Clear canvas with fade effect
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'
-        ctx.fillRect(0, 0, canvas.width, canvas.height)
-
-        // Draw grid effect
-        ctx.strokeStyle = 'rgba(0, 255, 255, 0.1)'
-        const gridSize = 40
-        for (let i = 0; i < canvas.width; i += gridSize) {
-          ctx.beginPath()
-          ctx.moveTo(i, 0)
-          ctx.lineTo(i, canvas.height)
-          ctx.stroke()
-        }
-
-        walls.forEach((wall) => wall.draw())
-        player.draw()
-      }
-
-      function gameLoop() {
-        update()
-        draw()
-        requestAnimationFrame(gameLoop)
-      }
-
-      // Handle window resize
-      function resizeCanvas() {
-        const container = document.querySelector('.game-container')
-        const rect = container.getBoundingClientRect()
-        canvas.style.width = `${rect.width}px`
-        canvas.style.height = `${rect.height}px`
-      }
-
-      window.addEventListener('resize', resizeCanvas)
-      resizeCanvas()
-
-      // Start game loop
-      gameLoop()
-    </script>
-  </body>
 </html>

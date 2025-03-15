@@ -1,0 +1,33 @@
+Please implement the below with the Phaser.js lib
+
+- This is a browser game called "Petsroids v0.1", please update the title in the `emulator-header`
+
+- Please preserve the placement of `game-container`, `emulator-frame`, `emulator-header`
+- Please us the `gameCanvas` inside the `game-container` for the game logic.
+- Please ignore the Farcade SDK for now, it's having network issues
+
+- There should be a startup screen telling the player to press space to start the game
+
+- The pictures are in the same folder as index.html
+- The player is a cow illustrated by `Cow_Black_Idle.png` which is 40 frames (72x72), and should be scaled 4x, it's facing left
+- The enemies are boars illustrated by `Boar_Black_Idle.png` which is 24 frames (72x72) and should be scaled 3x, it's facing right
+- The background consists of a static background image `grovebg.png` and an animated foreground `grovefg.png`
+    * The static background is 90x90 and should be scaled to fill the canvas, but keep the aspect ratio and align it to the bottom
+    * The animaton is also 90x90 with 13 frames. Please place it above the static background and below the player and enemies
+- The score, lives and speed should be show in a small div at the top of the canvas
+- Please flip the cow and the boars depending on which direction they move, taking heed of the way they originally face
+
+
+- The player (cow) has three lives, which should be displayed as hearts at the top of the page, right below the title
+- The enemies (boars) should approach the player. Pretty slow at first, but accelerating as time goes by. If the hit the player the player loses one life. 
+    * The images has some margin, so please allow the boars to overlap the cow by 50% before the kill occurs
+- The player can kill the boars by shoting and gets 10 points multiplied by the speed per boar kill
+- The player should be able to move the cow with the arrows and shoot with space background
+- When the player has lost all the lives it's game over
+- The boars should spawn every few seconds, from a random spot at the top of the canvas
+- The cow should be at the bottom of the canvas
+- There is no delay between shots
+- The bullets can be displayed as just some pixels for now
+- I think there should be a maximum of 5 boars at the screen at the same time
+- There is no win condition yet, let's play a bit to get the feel for it first
+- The UI color scheme should be light brow, beige
