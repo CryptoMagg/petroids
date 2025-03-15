@@ -165,7 +165,7 @@
         .setScale(3)
         .setFlipX(false);
       player.play('cow_idle');
-      player.setCollideWorldBounds(true, 0.6, 0.6);
+      player.body.setCollideWorldBounds(false);
       player.body.setSize(40, 40);
       player.body.setOffset(16, 16);
 
@@ -237,16 +237,22 @@
       if (cursors.left.isDown) {
         player.setVelocityX(-300);
         player.setFlipX(false);
+        if (player.x < -player.width) {
+          player.x = -player.width;
+        }
       } else if (cursors.right.isDown) {
         player.setVelocityX(300);
         player.setFlipX(true);
+        if (player.x > config.width + player.width) {
+          player.x = config.width + player.width;
+        }
       } else {
         player.setVelocityX(0);
       }
 
       // Shooting
       if (Phaser.Input.Keyboard.JustDown(spaceKey)) {
-        const bullet = bullets.create(player.x, player.y, 'bullet');
+        const bullet = bullets.create(player.x, player.y - 50, 'bullet');
         bullet.setVelocityY(-400);
         bullet.setDisplaySize(4, 4);
         bullet.setTint(0xF5DEB3);
@@ -269,9 +275,9 @@
 
           // Update enemy facing direction
           if (enemy.movePattern.speedX > 0) {
-            enemy.setFlipX(true);
-          } else if (enemy.movePattern.speedX < 0) {
             enemy.setFlipX(false);
+          } else if (enemy.movePattern.speedX < 0) {
+            enemy.setFlipX(true);
           }
 
           // Keep enemies within screen bounds
@@ -295,6 +301,33 @@
       enemies.children.iterate((enemy) => {
         if (enemy && enemy.y > config.height) {
           enemy.destroy();
+          // Player loses a life when boar reaches bottom
+          lives--;
+          if (hearts[lives]) {
+            hearts[lives].destroy();
+          }
+
+          if (lives <= 0) {
+            gameOver = true;
+            player.setTint(0xff0000);
+
+            gameOverText = this.add.text(config.width / 2, config.height / 2, 'GAME OVER\nScore: ' + score + '\nPress SPACE to restart', {
+              fontSize: '32px',
+              fill: '#F5DEB3',
+              align: 'center',
+              backgroundColor: '#000000',
+              padding: { x: 20, y: 10 }
+            }).setOrigin(0.5);
+
+            this.input.keyboard.once('keydown-SPACE', () => {
+              this.scene.restart();
+              lives = 3;
+              score = 0;
+              speed = 1;
+              gameOver = false;
+              gameStarted = false;
+            });
+          }
         }
       });
 
@@ -315,7 +348,7 @@
         .setScale(3);
 
       enemy.play('boar_idle');
-      enemy.setFlipX(false);
+      enemy.setFlipX(true);
       enemy.body.setSize(40, 40);
       enemy.body.setOffset(16, 16);
 
