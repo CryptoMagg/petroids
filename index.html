@@ -47,7 +47,7 @@
     .game-container {
       position: relative;
       width: 100%;
-      padding-top: 160%;
+      padding-top: 147.75%;
       background: #000;
       overflow: hidden;
       border-radius: 0 0 10px 10px;
@@ -80,7 +80,7 @@
       type: Phaser.AUTO,
       parent: 'gameCanvas',
       width: 400,
-      height: 640,
+      height: 591,
       physics: {
         default: 'arcade',
         arcade: {
@@ -117,34 +117,52 @@
     let foreground;
 
     function preload() {
-      this.load.spritesheet('cow', 'Cow_Black_Idle.png', { frameWidth: 72, frameHeight: 72 });
-      this.load.spritesheet('boar', 'Boar_Black_Idle.png', { frameWidth: 72, frameHeight: 72 });
-      this.load.image('background', 'grovebg.png');
-      this.load.spritesheet('foreground', 'grovefg.png', { frameWidth: 90, frameHeight: 90, endFrame: 12 });
+      this.load.spritesheet('cow', 'https://lqy3lriiybxcejon.public.blob.vercel-storage.com/lcoBMFJHy2KZ/Cow_Black_Idle-4xqCQYh6SqKZGXUfse8BrEVR8AoMjH.png', { frameWidth: 72, frameHeight: 72 });
+      this.load.spritesheet('boar', 'https://lqy3lriiybxcejon.public.blob.vercel-storage.com/lcoBMFJHy2KZ/Boar_Black_Idle-hmSQZZDUFEuJCI7wUAnWxgkLjUWjsq.png', { frameWidth: 72, frameHeight: 72 });
+      this.load.image('background', 'https://lqy3lriiybxcejon.public.blob.vercel-storage.com/lcoBMFJHy2KZ/grovebg-O4PPE3LjHkqH3iPFh9bolrYIlk0uAB.png');
+      this.load.spritesheet('foreground', 'https://lqy3lriiybxcejon.public.blob.vercel-storage.com/lcoBMFJHy2KZ/grovefg-DPeRK7wpw5HMU2Mkoi1kRIi0ZSHxFT.png', { frameWidth: 90, frameHeight: 90 });
     }
 
     function create() {
-      // Background
+      // Background setup
       const bgScale = config.width / 90;
       background = this.add.image(config.width / 2, config.height, 'background')
-        .setScale(bgScale)
-        .setOrigin(0.5, 1);
+        .setOrigin(0.5, 1)
+        .setScale(bgScale);
 
-      // Animated foreground
-      foreground = this.add.sprite(config.width / 2, config.height, 'foreground')
-        .setScale(bgScale)
-        .setOrigin(0.5, 1);
+      // Signal that game is ready to play
+      window.FarcadeSDK.singlePlayer.actions.ready();
 
+      // Handle play again requests
+      window.FarcadeSDK.on('play_again', () => {
+        this.scene.restart();
+        lives = 3;
+        score = 0;
+        speed = 1;
+        gameOver = false;
+        gameStarted = false;
+      });
+
+      // Handle mute/unmute
+      window.FarcadeSDK.on('toggle_mute', (data) => {
+        // Game currently has no audio, but we'll handle the event
+        // setMuted(data.isMuted);
+      });
+
+      // Foreground animation setup
       this.anims.create({
-        key: 'foreground_anim',
+        key: 'grass_wave',
         frames: this.anims.generateFrameNumbers('foreground', { start: 0, end: 12 }),
-        frameRate: 10,
+        frameRate: 8,
         repeat: -1
       });
 
-      foreground.play('foreground_anim');
+      foreground = this.add.sprite(config.width / 2, config.height, 'foreground')
+        .setOrigin(0.5, 1)
+        .setScale(bgScale);
+      foreground.play('grass_wave');
 
-      // Player animations
+      // Player animation setup
       this.anims.create({
         key: 'cow_idle',
         frames: this.anims.generateFrameNumbers('cow', { start: 0, end: 39 }),
@@ -152,7 +170,14 @@
         repeat: -1
       });
 
-      // Enemy animations
+      // Player setup
+      player = this.physics.add.sprite(config.width / 2, config.height - 100, 'cow');
+      player.body.setCollideWorldBounds(false);
+      player.setScale(3);
+      player.play('cow_idle');
+      player.setFlipX(true); // Start facing left as specified
+
+      // Boar animation setup
       this.anims.create({
         key: 'boar_idle',
         frames: this.anims.generateFrameNumbers('boar', { start: 0, end: 23 }),
@@ -160,19 +185,10 @@
         repeat: -1
       });
 
-      // Player setup
-      player = this.physics.add.sprite(config.width / 2, config.height - 100, 'cow')
-        .setScale(3)
-        .setFlipX(false);
-      player.play('cow_idle');
-      player.body.setCollideWorldBounds(false);
-      player.body.setSize(40, 40);
-      player.body.setOffset(16, 16);
-
       // Bullets group
       bullets = this.physics.add.group();
 
-      // Enemies group
+      // Enemies group - circles for boars
       enemies = this.physics.add.group();
 
       // UI setup
@@ -311,6 +327,9 @@
             gameOver = true;
             player.setTint(0xff0000);
 
+            // Signal game over to Farcade
+            window.FarcadeSDK.singlePlayer.actions.gameOver({ score: score });
+
             gameOverText = this.add.text(config.width / 2, config.height / 2, 'GAME OVER\nScore: ' + score + '\nPress SPACE to restart', {
               fontSize: '32px',
               fill: '#F5DEB3',
@@ -344,13 +363,9 @@
       if (enemies.countActive() >= 5) return;
 
       const x = Phaser.Math.Between(0, config.width);
-      const enemy = enemies.create(x, -50, 'boar')
-        .setScale(3);
-
+      const enemy = enemies.create(x, -50, 'boar');
+      enemy.setScale(3);
       enemy.play('boar_idle');
-      enemy.setFlipX(true);
-      enemy.body.setSize(40, 40);
-      enemy.body.setOffset(16, 16);
 
       // Set random movement pattern
       enemy.movePattern = {
@@ -367,6 +382,9 @@
       speedText.setText(`Speed: ${speed.toFixed(2)}x`);
       score += Math.floor(10 * speed);
       scoreText.setText('Score: ' + score);
+
+      // Add haptic feedback for successful hit
+      window.FarcadeSDK.singlePlayer.actions.hapticFeedback();
     }
 
     function enemyHitPlayer(player, enemy) {
@@ -377,6 +395,9 @@
         hearts[lives].destroy();
       }
 
+      // Add haptic feedback for taking damage
+      window.FarcadeSDK.singlePlayer.actions.hapticFeedback();
+
       // Flash the cow red
       player.setTint(0xff0000);
       this.time.delayedCall(200, () => {
@@ -386,6 +407,9 @@
       if (lives <= 0) {
         gameOver = true;
         player.setTint(0xff0000);
+
+        // Signal game over to Farcade
+        window.FarcadeSDK.singlePlayer.actions.gameOver({ score: score });
 
         gameOverText = this.add.text(config.width / 2, config.height / 2, 'GAME OVER\nScore: ' + score + '\nPress SPACE to restart', {
           fontSize: '32px',
